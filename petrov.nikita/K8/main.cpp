@@ -2,7 +2,7 @@
 #include <functional>
 
 template< class T, class Cmp >
-struct BiTree 
+struct BiTree
 {
   T data;
   Cmp cmp;
@@ -10,7 +10,13 @@ struct BiTree
 };
 
 template< class T, class Cmp >
-BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result);
+BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
+{
+  *result = find(root, value, root->cmp);
+}
+
+template< class T, class Cmp >
+std::ostream & outputBiTree(BiTree< T, Cmp > * root);
 
 template< class T, class Cmp >
 BiTree< T , Cmp > * convert(const T * array, size_t size, Cmp cmp)
@@ -54,6 +60,32 @@ BiTree< T , Cmp > * convert(const T * array, size_t size, Cmp cmp)
   {
     clearBiTree(root);
     throw;
+  }
+  return root;
+}
+
+template< class T, class Cmp >
+BiTree< T, Cmp > * find(BiTree< T, Cmp > * root, const T & value, Cmp cmp)
+{
+  if (!root)
+  {
+    return root;
+  }
+  while (root->data != value)
+  {
+    if (cmp(value, root->data) && root->left)
+    {
+      root = root->left;
+    }
+    else if (!cmp(value, root->data) && root->right)
+    {
+      root = root->right;
+    }
+    else
+    {
+      root = nullptr;
+      break;
+    }
   }
   return root;
 }
@@ -144,5 +176,34 @@ int main()
     delete[] elements_array;
     std::cerr << "ERROR: Out of memory" << "\n";
     return 3;
+  }
+  int number = 0;
+  while (!std::cin.eof())
+  {
+    std::cin >> number;
+    if (std::cin.eof())
+    {
+      break;
+    }
+    else if (!std::cin)
+    {
+      outputBiTree(root);
+      clearBiTree(root);
+      delete[] elements_array;
+      std::cerr << "ERROR: Invalid argument";
+      std::cerr << "\n";
+      return 4;
+    }
+    BiTree< int, std::less< int > > * extracted = nullptr;
+    root = extract(root, number, std::addressof(extracted));
+    if (extracted)
+    {
+      delete extracted;
+    }
+    else
+    {
+      std::cout << "<INVALID NODE>";
+      std::cout << "\n";
+    }
   }
 }
