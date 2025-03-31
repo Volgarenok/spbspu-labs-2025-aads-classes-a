@@ -12,31 +12,6 @@ struct BiTree
   BiTree* parent = nullptr;
 };
 template< class T, class Cmp >
-BiTree< T, Cmp >* rotate_right(BiTree< T, Cmp >* root)
-{
-  if ((root == nullptr) || (root->left == nullptr))
-  {
-    return nullptr;
-  }
-  BiTree< T, Cmp >* result = root->left;
-  result->parent = root->parent;
-  if (root->parent != nullptr)
-  {
-    if (root->parent->left == root)
-    {
-      root->parent->left = result;
-    }
-    else
-    {
-      root->parent->right = result;
-    }
-  }
-  root->parent = result;
-  root->left = result->right;
-  result->right = root;
-  return result;
-}
-template< class T, class Cmp >
 BiTree< T, Cmp >* insert(BiTree< T, Cmp >* root, const T& value)
 {
   BiTree< T, Cmp >* result = root;
@@ -107,9 +82,56 @@ BiTree< T, Cmp >* find(BiTree< T, Cmp >* root, const T& value)
 template< class T, class Cmp >
 BiTree< T, Cmp >* extract(BiTree< T, Cmp >* root, const T& value, BiTree< T, Cmp >** extracted)
 {
-  BiTree< T, Cmp >* result = find(root, value);
-  *extracted = result;
-  return root;
+  BiTree< T, Cmp >* toExtract = find(root, value);
+  if (toExtract == nullptr)
+  {
+    *extracted = nullptr;
+    return root;
+  }
+  BiTree< T, Cmp >* toReplace = nullptr;
+  if (toExtract->left != nullptr)
+  {
+    toReplace = toExtract->left;
+    if (toReplace->right != nullptr)
+    {
+      for (; toReplace->right != nullptr; toReplace = toReplace->right)
+      {}
+      if (toReplace->left != nullptr)
+      {
+        toReplace->parent->right = toReplace->left;
+        toReplace->left->parent = toReplace->parent;
+        toReplace->left = nullptr;
+      }
+    }
+    toReplace->right = toExtract->right;
+    if (toExtract->right != nullptr)
+    {
+      toExtract->right->parent = toReplace;
+    }
+  }
+  else
+  {
+    toReplace = toExtract->right;
+  }
+  *extracted = toExtract;
+
+  if (toReplace != nullptr)
+  {
+    toReplace->parent = toExtract->parent;
+  }
+  if (toExtract->parent != nullptr)
+  {
+    if (toExtract->parent->left == toExtract)
+    {
+      toExtract->parent->left = toReplace;
+    }
+    else
+    {
+      toExtract->parent->right = toReplace;
+    }
+    return root;
+  }
+  return toReplace;
 }
 template< class T, class Cmp >
 BiTree< T, Cmp >* begin(BiTree< T, Cmp >* root)
@@ -131,7 +153,7 @@ BiTree< T, Cmp >* next(BiTree< T, Cmp >* node)
   {
     BiTree< T, Cmp >* prev = node;
     node = node->parent;
-    for (; (node != nullptr) && (node->right == prev); node = node->parent)
+    for (; (node != nullptr) && (node->right == prev); prev = node, node = node->parent)
     {}
     return node;
   }
@@ -179,24 +201,22 @@ int main()
     if (extracted == nullptr)
     {
       std::cerr << "<INVALID NODE>\n";
+      continue;
     }
-    else
-    {
-      std::cout << extracted->data << '\n';
-    }
+    delete extracted;
   }
+  char space[2] = "\0";
+  for (node_type* i = begin(root); i != nullptr; i = next(i))
+  {
+    std::cout << space << i->data;
+    space[0] = ' ';
+  }
+  std::cout << '\n';
+  destroy(root);
+
   if (!std::cin.eof())
   {
     std::cerr << "wrong input\n";
-    char space[2] = "\0";
-    for (node_type* i = begin(root); i != nullptr; i = next(i))
-    {
-      std::cout << space << i->data;
-      space[0] = ' ';
-    }
-    std::cout << '\n';
-    destroy(root);
     return 1;
   }
-  destroy(root);
 }
