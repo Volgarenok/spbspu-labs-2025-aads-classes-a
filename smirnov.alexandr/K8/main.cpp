@@ -134,6 +134,26 @@ void clear(BiTree< T, Cmp > * root)
   }
 }
 
+template< class T, class Cmp >
+void print(BiTree< T, Cmp > * root)
+{
+  bool first = true;
+  if (root != nullptr)
+  {
+    if (first)
+    {
+      print(root->left);
+    }
+    else
+    {
+      std::cout << " ";
+    }
+    std::cout << root->data;
+    print(root->right);
+    first = false;
+  }
+}
+
 int main()
 {
 BiTree< int, std::less< int > > * root = getTree< int, std::less< int > >(std::cin);
@@ -160,6 +180,7 @@ BiTree< int, std::less< int > > * root = getTree< int, std::less< int > >(std::c
   if (!std::cin)
   {
     std::cerr << "Input error!\n";
+    print(root);
     clear(root);
     return 1;
   }
