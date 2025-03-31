@@ -1,5 +1,5 @@
 #include <iostream>
-#include <function>
+#include <functional>
 
 template< class T, class Cmp >
 struct BiTree
@@ -10,29 +10,46 @@ struct BiTree
 };
 
 template< class T, class Cmp >
-BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result);
+BiTree< T, Cmp > * getTree(std::istream & in)
+{}
+
+template< class T, class Cmp >
+BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
+{}
+
+template< class T, class Cmp >
+void clear(BiTree< T, Cmp > * root)
+{}
 
 
 int main()
 {
-  size_t length = 0;
-  if (!std::cin >> length)
+  BiTree< int, std::less< int > > * root = getTree< int, std::less< int > >(std::cin);
+  if (!std::cin)
   {
-    std::cerr << "ERROR: input length\n";
+    clear(root);
+    std::cerr << "ERROR: input\n";
     return 1;
   }
-  if (length == 0)
+  int value = 0;
+  while (!(std::cin >> value).eof() && !std::cin.fail())
   {
-    return 0;
-  }
-  int * elements = new int[length];
-  for (size_t i = 0; i < length; i++)
-  {
-    if (!std::cin >> elements[i])
+    BiTree< int, std::less< int > > * extracted = nullptr;
+    root = extract(root, value, std::addressof(extracted));
+    if (extracted)
     {
-      std::cerr << "ERROR: input elements\n";
-      delete[] elements;
-      return 1;
+      delete extracted;
+    }
+    else
+    {
+      std::cout << "<INVALID NODE>";
     }
   }
+  if (!std::cin)
+  {
+    clear(root);
+    std::cerr << "ERROR: input\n";
+    return 1;
+  }
+  clear(root);
 }
