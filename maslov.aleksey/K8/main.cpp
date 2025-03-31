@@ -191,7 +191,7 @@ int main()
     }
     else
     {
-      std::cout << "<INVALID NODE>";
+      std::cout << "<INVALID NODE>\n";
     }
   }
   printTree(std::cout, root);
