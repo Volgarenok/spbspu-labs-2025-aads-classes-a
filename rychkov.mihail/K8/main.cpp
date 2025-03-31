@@ -96,12 +96,13 @@ BiTree< T, Cmp >* extract(BiTree< T, Cmp >* root, const T& value, BiTree< T, Cmp
     {
       for (; toReplace->right != nullptr; toReplace = toReplace->right)
       {}
+      toReplace->parent->right = toReplace->left;
       if (toReplace->left != nullptr)
       {
-        toReplace->parent->right = toReplace->left;
         toReplace->left->parent = toReplace->parent;
-        toReplace->left = nullptr;
       }
+      toReplace->left = toExtract->left;
+      toExtract->left->parent = toReplace;
     }
     toReplace->right = toExtract->right;
     if (toExtract->right != nullptr)
@@ -200,7 +201,7 @@ int main()
     root = extract(root, number, &extracted);
     if (extracted == nullptr)
     {
-      std::cerr << "<INVALID NODE>\n";
+      std::cout << "<INVALID NODE>\n";
       continue;
     }
     delete extracted;
