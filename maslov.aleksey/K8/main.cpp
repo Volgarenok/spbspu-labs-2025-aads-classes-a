@@ -80,6 +80,8 @@ BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, 
   {
     return root;
   }
+  BiTree< T, Cmp > * deleteNode = root;
+  *result = deleteNode;
   if (!current->left || !current->right)
   {
     if (current->left)
@@ -92,9 +94,8 @@ BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, 
     }
     if (current)
     {
-      current->parent = current->parent;
+      current->parent = deleteNode->parent;
     }
-    *result = current;
   }
   else
   {
