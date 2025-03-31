@@ -35,7 +35,7 @@ namespace
   {
     if (!root)
     {
-      *retsult = nullptr;
+      *result = nullptr;
       return nullptr;
     }
     if (root->cmp(value, root->data))
@@ -58,7 +58,7 @@ namespace
       else if (root->right != nullptr)
       {
         BiTree< T, Cmp >* min_tree = findMin(root->right);
-        root->data = max_tree->data;
+        root->data = min_tree->data;
         root->right = extract(root->right, min_tree->data, result);
       }
       else
@@ -86,7 +86,7 @@ namespace
   {
     if (root == nullptr)
     {
-      return new BiTree< T >{value, nullptr, nullptr, nullptr};
+      return new BiTree< T, Cmp >{value, cmp, nullptr, nullptr, nullptr};
     }
     else if (cmp(value, root->data))
     {
