@@ -67,7 +67,61 @@ BiTree< T, Cmp > * getTree(std::istream & is)
 }
 
 template< class T, class Cmp >
-BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & rhs, BiTree< T, Cmp > ** extracted);
+BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & rhs, BiTree< T, Cmp > ** extracted)
+{
+  if (root == nullptr)
+  {
+    extracted = nullptr;
+    return nullptr;
+  }
+  if (root->cmp(rhs, root->data))
+  {
+    root->left = extract(root->left, rhs, extracted);
+    if (root->left != nullptr)
+    {
+      root->left->parent = root;
+    }
+    return root;
+  }
+  if (root->cmp(root->data, rhs))
+  {
+    root->right = extract(root->right, rhs, extracted);
+    if (root->right != nullptr)
+    {
+      root->right->parent = root;
+    }
+    return root;
+  }
+  *extracted = root;
+  if (root->left == nullptr)
+  {
+    BiTree< T, Cmp > * right_child = root->right;
+    if (right_child != nullptr)
+    {
+      right_child->parent = root->parent;
+    }
+    root->right = nullptr;
+    return right_child;
+  }
+  if (root->right == nullptr)
+  {
+    BiTree< T, Cmp > * left_child = root->left;
+    if (left_child != nullptr)
+    {
+      left_child->parent = root->parent;
+    }
+    root->left = nullptr;
+    return left_child;
+  }
+  BiTree< T, Cmp > * min_node = root->right;
+  while (min_node->left != nullptr)
+  {
+    min_node = min_node->left;
+  }
+  root->data = min_node->data;
+  root->right = extract(root->right, min_node->data, extracted);
+  return root;
+}
 
 template< class T, class Cmp >
 void clear(BiTree< T, Cmp > * root)
