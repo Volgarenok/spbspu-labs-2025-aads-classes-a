@@ -59,6 +59,65 @@ BiTree< T, Cmp > * getTree(const T * elements, size_t length, Cmp cmp)
 template< class T, class Cmp >
 BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
 {
+  *result = nullptr;
+  if (!root)
+  {
+    return nullptr;
+  }
+  BiTree< T, Cmp > * current = root;
+  while (current && (current->data != value))
+  {
+    if (current->cmp(value, current->data))
+    {
+      current = current->left;
+    }
+    else
+    {
+      current = current->right;
+    }
+  }
+  if (!current)
+  {
+    return root;
+  }
+  if (!current->left || !current->right)
+  {
+    if (current->left)
+    {
+      current = current->left;
+    }
+    else
+    {
+      current = current->right;
+    }
+    if (current)
+    {
+      current->parent = current->parent;
+    }
+    *result = current;
+  }
+  else
+  {
+    BiTree< T, Cmp > * minNode = current->right;
+    while (minNode->left)
+    {
+      minNode = minNode->left;
+    }
+    current->data = minNode->data;
+    if (minNode->parent->left == minNode)
+    {
+      minNode->parent->left = minNode->right;
+    }
+    else
+    {
+      minNode->parent->right = minNode->right;
+    }
+    if (minNode->right)
+    {
+      minNode->right->parent = minNode->parent;
+    }
+    *result = minNode;
+  }
   return root;
 }
 
@@ -71,6 +130,24 @@ void clear(BiTree< T, Cmp > * root)
     clear(root->right);
     delete root;
   }
+}
+
+template< class T, class Cmp >
+void printTree(std::ostream & out, BiTree< T, Cmp > * root)
+{
+  if (!root)
+  {
+    return;
+  }
+  static bool isFirst = true;
+  printTree(out, root->left);
+  if (!isFirst)
+  {
+    out << " ";
+  }
+  out << root->data;
+  isFirst = false;
+  printTree(out, root->right);
 }
 
 int main()
@@ -98,10 +175,11 @@ int main()
   }
   catch (const std::bad_alloc &)
   {
+    delete[] elements;
     std::cerr << "ERROR: memory\n";
     return 1;
   }
-
+  delete[] elements;
   int value = 0;
   while (!(std::cin >> value).eof() && !std::cin.fail())
   {
@@ -116,11 +194,7 @@ int main()
       std::cout << "<INVALID NODE>";
     }
   }
-  if (!std::cin)
-  {
-    clear(root);
-    std::cerr << "ERROR: input\n";
-    return 1;
-  }
+  printTree(std::cout, root);
+  std::cout << "\n";
   clear(root);
 }
