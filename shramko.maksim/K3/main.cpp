@@ -16,239 +16,169 @@ void rmArr(int** arr, size_t size)
   delete[] arr;
 }
 
-void rmList(List< int > * head)
-{
-  while (head != nullptr)
-  {
-    List< int > * temp = head;
-    head = head->next;
-    delete temp;
-  }
-}
-
 void rmList(List< List< int > * > * head)
 {
-  while (head != nullptr)
+  while (head)
   {
-    List< int > * temp = head->data;
-    rmList(temp);
-    List< List< int > * > * tempHead = head;
-    head = head->next;
-    delete tempHead;
-  }
-}
-
-template< class T >
-size_t countEven(const List< List< T > * > * head)
-{
-  size_t res = 0;
-  const List< List< int > * > * tail = head;
-  while (tail != nullptr)
-  {
-    List< T > * temp = tail->data;
-    while (temp != nullptr)
+    List< List< int > * > * tempHead = head->next;
+    List< int > * subHead = head->data;
+    while (subHead)
     {
-      if ((temp->data % 2) == 0)
-      {
-        res += 1;
-      }
-      temp = temp->next;
+      List< int > * node = subHead->next;
+      delete subHead;
+      subHead = node;
     }
-    tail = tail->next;
+    delete head;
+    head = tempHead;
   }
-
-  return res;
 }
 
-template< class T >
-size_t countOdd(const List< List< T > * > * head)
+bool isEven(int n)
 {
-  size_t res = 0;
-  const List< List< int > * > * tail = head;
-  while (tail != nullptr)
-  {
-    List< T > * temp = tail->data;
-    while (temp != nullptr)
-    {
-      if ((temp->data % 2) != 0)
-      {
-        res += 1;
-      }
-      temp = temp->next;
-    }
-    tail = tail->next;
-  }
-
-  return res;
+  return n % 2 == 0;
 }
 
-template< class T, class C>
+bool isOdd(int n)
+{
+  return n % 2 != 0;
+}
+
+template< class T, class C >
 size_t count(const List< List< T > * > * head, C word)
 {
-  if (word)
+  size_t s = 0;
+  while (head)
   {
-    return countEven(head);
+    List< int > * sHead = head->data;
+    while (sHead)
+    {
+      if (word(sHead->data))
+      {
+        s++;
+      }
+      sHead = sHead->next;
+    }
+    head = head->next;
   }
-  else
-  {
-    return countOdd(head);
-  }
+  return s;
 }
 
-List< int > * convert(const int* arr, size_t n)
+List< List< int > * > * convert(const int* const* arr, size_t m, const size_t* n)
 {
-  List< int > * head = new List< int >{ arr[0], nullptr };
-  List< int > * tail = head;
-  for (size_t i = 1; i < n; i++)
+  List< List< int > * > * head = new List< List< int > * >{ nullptr, nullptr };
+  List< List< int > * > * tail = head;
+  for (size_t i = 0; i < m; i++)
   {
-    List< int > * temp = nullptr;
+    List< int > * sHead = nullptr;
+    List< int > * sTail = nullptr;
     try
     {
-      temp = new List< int >{ arr[i], nullptr };
+      sHead = new List< int >{ arr[i][0], nullptr };
+      sTail = sHead;
+      for (size_t j = 1; j < n[i]; j++)
+      {
+        List< int > * newPart = new List< int >{ arr[i][j], nullptr };
+        sTail->next = newPart;
+        sTail = newPart;
+      }
+      tail->next = new List< List< int > * >{ sHead, nullptr };
+      tail = tail->next;
     }
-    catch (std::bad_alloc&)
+    catch (const std::bad_alloc &)
     {
       rmList(head);
       throw;
     }
-    tail->next = temp;
-    tail = temp;
   }
-
-  return head;
-}
-
-List< List < int > * > * convert(const int* const* d, size_t m, const size_t* n)
-{
-  if (m == 0)
-  {
-    return nullptr;
-  }
-
-  List< List < int > * > * head = new List< List < int > * >{ convert(d[0], n[0]), nullptr };
-  List< List < int > * > * tail = head;
-
-  for (size_t i = 1; i < m; i++)
-  {
-    List< List < int > * > * temp = nullptr;
-    try
-    {
-      temp = new List< List < int > * >{ convert(d[i], n[i]), nullptr };
-    }
-    catch (std::bad_alloc&)
-    {
-      rmList(head);
-      throw;
-    }
-    tail->next = temp;
-    tail = temp;
-  }
-
   return head;
 }
 
 int main()
 {
   size_t m = 0;
-
-  std::cin >> m;
-  if (std::cin.fail())
+  if (!(std::cin >> m))
   {
     std::cerr << "Error: Main -> cin m.\n";
     return 1;
   }
 
   int** arr = nullptr;
+  size_t* numElem = nullptr;
   try
   {
     arr = new int*[m];
+    numElem = new size_t[m];
   }
-  catch (const std::bad_alloc()&)
+  catch (const std::bad_alloc &)
   {
     std::cerr << "Error: main -> arr bad_alloc\n";
-    return 1;
-  }
-
-  size_t* size = nullptr;
-  try
-  {
-    size = new size_t[m];
-  }
-  catch (const std::bad_alloc&)
-  {
-    std::cerr << "Error: main -> size bad_alloc\n";
-    rmArr(arr, m);
+    delete[] arr;
     return 1;
   }
 
   for (size_t i = 0; i < m; i++)
   {
-    std::cin >> size[i];
-    if (std::cin.fail())
+    if (!(std::cin >> numElem[i]))
     {
       std::cerr << "Error: Main -> cin size.\n";
       rmArr(arr, i);
-      delete[] size;
+      delete[] numElem;
       return 1;
     }
 
     try
     {
-      arr[i] = new int[size[i]];
+      arr[i] = new int[numElem[i]];
     }
-    catch (const std::bad_alloc&)
+    catch (const std::bad_alloc &)
     {
       std::cerr << "Error: main -> arr bad_alloc\n";
       rmArr(arr, i);
-      delete[] size;
+      delete[] numElem;
       return 1;
     }
 
-    for (size_t j = 0; j < size[i]; j++)
+    for (size_t j = 0; j < numElem[i]; j++)
     {
-      int temp = 0;
-      std::cin >> temp;
-      if (std::cin.fail())
+      if (!(std::cin >> arr[i][j]))
       {
         std::cerr << "Error: main -> cin arr[i][j].\n";
         rmArr(arr, i + 1);
-        delete[] size;
+        delete[] numElem;
         return 1;
       }
-      arr[i][j] = temp;
     }
   }
 
-  List< List < int > * > * head = nullptr;
+  List< List< int > * > * head = nullptr;
   try
   {
-    head = convert(arr, m, size);
+    head = convert(arr, m, numElem);
   }
-  catch (const std::bad_alloc&)
+  catch (const std::bad_alloc &)
   {
     std::cerr << "Error: main -> convert bad_alloc\n";
     rmArr(arr, m);
-    delete[] size;
+    delete[] numElem;
     return 1;
   }
+  rmArr(arr, m);
+  delete[] numElem;
 
   std::string word = "";
   std::cin >> word;
   if (word == "even")
   {
-    std::cout << count(head, 1);
+    std::cout << count(head, isEven);
   }
   else if (word == "odd")
   {
-    std::cout << count(head, 0);
+    std::cout << count(head, isOdd);
   }
   else
   {
-    std::cout << count(head, 0) << " " << count(head, 1);
+    std::cout << count(head, isOdd) << " " << count(head, isEven);
   }
   std::cout << "\n";
-
-  rmArr(arr, m);
-  delete[] size;
   rmList(head);
 }
