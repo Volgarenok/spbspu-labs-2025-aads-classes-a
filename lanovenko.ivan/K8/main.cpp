@@ -211,7 +211,7 @@ BiTree< T, Cmp >* convert(const T* data, size_t s)
   {
     return nullptr;
   }
-  BiTree< T, Cmp >* root = new BiTree< T, Cmp >{ data[0], std::less< T >{}, nullptr, nullptr, nullptr};
+  BiTree< T, Cmp >* root = new BiTree< T, Cmp >{ data[0], std::less< T >{}, nullptr, nullptr, nullptr };
   try
   {
     for (size_t i = 1; i < s; i++)
@@ -267,9 +267,15 @@ int main()
     std::cerr << "Out of memmory";
     return 1;
   }
-  int current;
-  while (!(std::cin >> current).eof() && !std::cin.fail())
+  int current = 0;
+  bool errors = false;
+  while (!std::cin.eof())
   {
+    if (!(std::cin >> current))
+    {
+      errors = true;
+      break;
+    }
     BiTree< int, std::less< int > >* extracted = nullptr;
     try
     {
@@ -281,12 +287,13 @@ int main()
     }
     delete extracted;
   }
-  if (!(std::cin))
+  if (errors && !std::cin.eof())
   {
     std::cerr << "Input fail\n";
     printBiTree(root);
     clearBiTree(&root);
     return 1;
   }
+  printBiTree(root);
   clearBiTree(&root);
 }
