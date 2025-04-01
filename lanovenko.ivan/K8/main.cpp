@@ -29,8 +29,14 @@ void printBiTree(BiTree< T, Cmp >* root)
   {
     return;
   }
+  static bool first = true;
   printBiTree(root->left);
-  std::cout << root->data << " ";
+  if (!first)
+  {
+    std::cout << " ";
+  }
+  std::cout << root->data;
+  first = false;
   printBiTree(root->right);
 }
 
