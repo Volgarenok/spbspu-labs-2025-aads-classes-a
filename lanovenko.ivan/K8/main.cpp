@@ -79,7 +79,7 @@ BiTree< T, Cmp >* find(BiTree< T, Cmp >* root, const T& value)
   }
   if (!yaroot)
   {
-    throw std::invalid_argument("<INVALID NODE>\n");
+    throw std::invalid_argument("<INVALID NODE>");
   }
   else
   {
@@ -283,7 +283,7 @@ int main()
     }
     catch (const std::invalid_argument& e)
     {
-      std::cout << e.what();
+      std::cout << e.what() << "\n";
     }
     delete extracted;
   }
