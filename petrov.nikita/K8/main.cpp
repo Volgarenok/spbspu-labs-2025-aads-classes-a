@@ -12,11 +12,46 @@ struct BiTree
 template< class T, class Cmp >
 BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
 {
-  *result = find(root, value, root->cmp);
+  BiTree< T, Cmp > * ptr_result = find(root, value, root->cmp);
+  if (!ptr_result)
+  {
+    return nullptr;
+  }
+  *result = ptr_result;
+  auto new_root = ptr_result;
+  auto copy = ptr_result;
+  if (copy->left)
+  {
+    copy = copy->left;
+    while (copy->right)
+    {
+      copy = copy->right;
+    }
+  }
+  else if (copy->right)
+  {
+    copy = copy->right;
+    while (copy->left)
+    {
+      copy = copy->left;
+    }
+  }
+  else
+  {
+    return nullptr;
+  }
+  new_root = copy;
+  auto left_son = ptr_result->left;
+  auto right_son = ptr_result->right;
+  ptr_result->left = nullptr;
+  ptr_result->right = nullptr;
+  new_root->left = left_son;
+  new_root->right = right_son;
+  return new_root;
 }
 
 template< class T, class Cmp >
-std::ostream & outputBiTree(BiTree< T, Cmp > * root);
+std::ostream & outputBiTree(std::ostream & out, BiTree< T, Cmp > * root);
 
 template< class T, class Cmp >
 BiTree< T , Cmp > * convert(const T * array, size_t size, Cmp cmp)
@@ -187,7 +222,6 @@ int main()
     }
     else if (!std::cin)
     {
-      outputBiTree(root);
       clearBiTree(root);
       delete[] elements_array;
       std::cerr << "ERROR: Invalid argument";
