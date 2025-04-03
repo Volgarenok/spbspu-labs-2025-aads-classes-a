@@ -301,7 +301,6 @@ int main()
     std::cerr << "Input fail" << "\n";
     clearBiTree(&root);
     return 1;
-    
   }
   printBiTree(root, std::cout);
   clearBiTree(&root);
