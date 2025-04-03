@@ -99,6 +99,10 @@ BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, 
 template< class T, class Cmp >
 std::ostream & outputBiTree(std::ostream & out, BiTree< T, Cmp > * root)
 {
+  if (!root)
+  {
+    return out;
+  }
   while (root->left)
   {
     root = root->left;
