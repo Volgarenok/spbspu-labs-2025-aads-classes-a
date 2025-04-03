@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <ostream>
 
 template < class T, class Cmp >
 struct BiTree
@@ -23,21 +24,21 @@ void clearBiTree(BiTree< T, Cmp>** root)
 }
 
 template< class T, class Cmp >
-void printBiTree(BiTree< T, Cmp >* root)
+void printBiTree(BiTree< T, Cmp >* root, std::ostream& out)
 {
   if (!root)
   {
     return;
   }
   static bool first = true;
-  printBiTree(root->left);
+  printBiTree(root->left, out);
   if (!first)
   {
-    std::cout << " ";
+    out << " ";
   }
-  std::cout << root->data;
+  out << root->data;
   first = false;
-  printBiTree(root->right);
+  printBiTree(root->right, out);
 }
 
 template< class T, class Cmp >
@@ -296,11 +297,11 @@ int main()
   if (errors && !std::cin.eof())
   {
     std::cerr << "Input fail\n";
-    printBiTree(root);
+    printBiTree(root, std::cerr);
     clearBiTree(&root);
     return 1;
   }
-  printBiTree(root);
+  printBiTree(root, std::cout);
   clearBiTree(&root);
   std::cout << "\n";
 }
