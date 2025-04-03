@@ -299,7 +299,7 @@ int main()
     std::cerr << "Input fail\n";
     printBiTree(root, std::cerr);
     clearBiTree(&root);
-    std::cout << "\n";
+    std::cerr << "\n";
     return 1;
   }
   printBiTree(root, std::cout);
