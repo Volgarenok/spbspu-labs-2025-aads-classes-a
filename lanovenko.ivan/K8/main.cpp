@@ -304,5 +304,3 @@ int main()
   clearBiTree(&root);
   std::cout << "\n";
 }
-
-
