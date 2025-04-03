@@ -267,6 +267,7 @@ int main()
     std::cerr << "ERROR: Out of memory" << "\n";
     return 3;
   }
+  delete[] elements_array;
   int number = 0;
   while (!std::cin.eof())
   {
@@ -278,8 +279,8 @@ int main()
     else if (!std::cin)
     {
       outputBiTree(std::cout, root);
+      std::cout << "\n";
       clearBiTree(root);
-      delete[] elements_array;
       std::cerr << "ERROR: Invalid argument";
       std::cerr << "\n";
       return 4;
@@ -288,16 +289,15 @@ int main()
     root = extract(root, number, std::addressof(extracted));
     if (extracted)
     {
-      outputBiTree(std::cout, root);
       delete extracted;
-      std::cout << "\n";
     }
     else
     {
       std::cout << "<INVALID NODE>";
       std::cout << "\n";
-      outputBiTree(std::cout, root);
-      std::cout << "\n";
     }
   }
+  outputBiTree(std::cout, root);
+  std::cout << "\n";
+  clearBiTree(root);
 }
