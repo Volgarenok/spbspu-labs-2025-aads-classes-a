@@ -99,11 +99,56 @@ BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, 
 template< class T, class Cmp >
 std::ostream & outputBiTree(std::ostream & out, BiTree< T, Cmp > * root)
 {
-  if (root)
+  while (root->left)
   {
-    outputBiTree(out, root->left);
-    out << root->data << " ";
-    outputBiTree(out, root->right);
+    root = root->left;
+  }
+  out << root->data;
+  if (root->parent)
+  {
+    while (root->parent)
+    {
+      root = root->parent;
+      auto subroot = root;
+      out << " " << root->data;
+      while (root->right)
+      {
+        root = root->right;
+        auto subroot = root;
+        while (root->left)
+        {
+          root = root->left;
+        }
+        out << " " << root->data;
+        while (root != subroot)
+        {
+          root = root->parent;
+          out << " " << root->data;
+        }
+      }
+      while (root != subroot)
+      {
+        root = root->parent;
+      }
+    }
+  }
+  else
+  {
+    while (root->right)
+    {
+      root = root->right;
+      auto subroot = root;
+      while (root->left)
+      {
+        root = root->left;
+      }
+      out << " " << root->data;
+      while (root != subroot)
+      {
+        root = root->parent;
+        out << " " << root->data;
+      }
+    }
   }
   return out;
 }
@@ -183,27 +228,13 @@ BiTree< T, Cmp > * find(BiTree< T, Cmp > * root, const T & value, Cmp cmp)
 template< class T, class Cmp >
 void clearBiTree(BiTree< T, Cmp > * root)
 {
-  if (!root)
+  if (root)
   {
-    return;
-  }
-  while (root->left)
-  {
-    root = root->left;
-  }
-  while (root->parent)
-  {
+    clearBiTree(root->left);
     auto todelete = root;
-    root = root->parent;
+    clearBiTree(root->right);
     delete todelete;
   }
-  while (root->right)
-  {
-    auto todelete = root;
-    root = root->right;
-    delete todelete;
-  }
-  delete root;
 }
 
 int main()
