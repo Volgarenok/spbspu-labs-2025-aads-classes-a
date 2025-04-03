@@ -313,6 +313,8 @@ int main()
     }
     else if (!std::cin)
     {
+      outputBiTree(std::cerr, root);
+      std::cerr << "\n";
       clearBiTree(root);
       std::cerr << "ERROR: Invalid argument";
       std::cerr << "\n";
