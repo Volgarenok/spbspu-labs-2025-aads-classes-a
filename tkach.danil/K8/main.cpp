@@ -108,15 +108,22 @@ namespace
   }
 
   template< class T, class Cmp >
-  void printTree(std::ostream& out, const BiTree< T, Cmp >* const root)
+  void printTree(std::ostream& out, const BiTree< T, Cmp >* const root, const T& val_min)
   {
     if (!root)
     {
       return;
     }
-    printTree(out, root->left);
-    out << root->data << " ";
-    printTree(out, root->right);
+    printTree(out, root->left, val_min);
+    if (root->data == val_min)
+    {
+      out << root->data;
+    }
+    else
+    {
+      out << " " << root->data;
+    }
+    printTree(out, root->right, val_min);
   }
 }
 
@@ -155,7 +162,7 @@ int main()
   {
     if (!std::cin)
     {
-      printTree(std::cout, root);
+      printTree(std::cout, root, findMin(root)->data);
       std::cout << "\n";
       std::cerr << "Not number\n";
       clear(root);
@@ -172,7 +179,7 @@ int main()
       std::cout << "<INVALID NODE>\n";
     }
   }
-  printTree(std::cout, root);
+  printTree(std::cout, root, findMin(root)->data);
   std::cout << "\n";
   clear(root);
   return 0;
