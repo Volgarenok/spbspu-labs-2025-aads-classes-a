@@ -12,46 +12,101 @@ struct BiTree
 template< class T, class Cmp >
 BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
 {
-  BiTree< T, Cmp > * ptr_result = find(root, value, root->cmp);
-  if (!ptr_result)
+  auto extracted = find(root, value, root->cmp);
+  *result = extracted;
+  if (!extracted)
   {
-    return nullptr;
+    return root;
   }
-  *result = ptr_result;
-  auto new_root = ptr_result;
-  auto copy = ptr_result;
-  if (copy->left)
+  if (!extracted)
   {
-    copy = copy->left;
-    while (copy->right)
+    return extracted;
+  }
+  auto subroot = root;
+  if (subroot->left)
+  {
+    subroot = subroot->left;
+    while (subroot->right)
     {
-      copy = copy->right;
+      subroot = subroot->right;
     }
   }
-  else if (copy->right)
+  else if (subroot->right)
   {
-    copy = copy->right;
-    while (copy->left)
+    subroot = subroot->right;
+    while (subroot->left)
     {
-      copy = copy->left;
+      subroot = subroot->left;
     }
   }
   else
   {
     return nullptr;
   }
-  new_root = copy;
-  auto left_son = ptr_result->left;
-  auto right_son = ptr_result->right;
-  ptr_result->left = nullptr;
-  ptr_result->right = nullptr;
-  new_root->left = left_son;
-  new_root->right = right_son;
-  return new_root;
+  if (subroot->parent->right == subroot)
+  {
+    subroot->parent->right = nullptr;
+  }
+  else if (subroot->parent->left == subroot)
+  {
+    subroot->parent->left = nullptr;
+  }
+  if (subroot->parent != root)
+  {
+    if (subroot->parent->right == subroot)
+    {
+      subroot->parent->right = nullptr;
+    }
+    else if (subroot->parent->left == subroot)
+    {
+      subroot->parent->left = nullptr;
+    }
+    auto temp = root;
+    root = subroot;
+    root->left = temp->left;
+    root->right = temp->right;
+    temp->left->parent = root;
+    temp->right->parent = root;
+    root->parent = nullptr;
+    subroot = nullptr;
+  }
+  else
+  {
+    if (subroot->parent->right == subroot)
+    {
+      auto temp = root;
+      subroot->parent->right = nullptr;
+      root = subroot;
+      root->left = temp->left;
+      temp->left->parent = root;
+      root->parent = nullptr;
+      subroot = nullptr;
+    }
+    else
+    {
+      auto temp = root;
+      subroot->parent->left = nullptr;
+      root = subroot;
+      root->right = temp->right;
+      temp->right->parent = root;
+      root->parent = nullptr;
+      subroot = nullptr;
+    }
+  }
+  return root;
 }
 
 template< class T, class Cmp >
-std::ostream & outputBiTree(std::ostream & out, BiTree< T, Cmp > * root);
+std::ostream & outputBiTree(std::ostream & out, BiTree< T, Cmp > * root)
+{
+  if (root)
+  {
+    outputBiTree(out, root->left);
+    out << root->data << " ";
+    outputBiTree(out, root->right);
+  }
+  return out;
+}
 
 template< class T, class Cmp >
 BiTree< T , Cmp > * convert(const T * array, size_t size, Cmp cmp)
@@ -222,6 +277,7 @@ int main()
     }
     else if (!std::cin)
     {
+      outputBiTree(std::cout, root);
       clearBiTree(root);
       delete[] elements_array;
       std::cerr << "ERROR: Invalid argument";
@@ -232,11 +288,15 @@ int main()
     root = extract(root, number, std::addressof(extracted));
     if (extracted)
     {
+      outputBiTree(std::cout, root);
       delete extracted;
+      std::cout << "\n";
     }
     else
     {
       std::cout << "<INVALID NODE>";
+      std::cout << "\n";
+      outputBiTree(std::cout, root);
       std::cout << "\n";
     }
   }
