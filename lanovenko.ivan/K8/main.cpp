@@ -296,7 +296,7 @@ int main()
   }
   if (errors && !std::cin.eof())
   {
-    printBiTree(root, std::cerr);
+    printBiTree(root, std::cout);
     std::cerr << "\n";
     std::cerr << "Input fail" << "\n";
     clearBiTree(&root);
