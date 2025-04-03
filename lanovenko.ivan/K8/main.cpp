@@ -305,6 +305,4 @@ int main()
   printBiTree(root, std::cout);
   clearBiTree(&root);
   std::cout << "\n";
-
-
 }
