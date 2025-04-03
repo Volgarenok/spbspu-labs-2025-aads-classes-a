@@ -172,6 +172,8 @@ int main()
       std::cout << "<INVALID NODE>\n";
     }
   }
+  printTree(std::cout, root);
+  std::cout << "\n";
   clear(root);
   return 0;
 }
