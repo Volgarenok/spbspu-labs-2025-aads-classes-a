@@ -106,6 +106,18 @@ namespace
     }
     return root;
   }
+
+  template< class T, class Cmp >
+  void printTree(std::ostream& out, const BiTree< T, Cmp >* const root)
+  {
+    if (!root)
+    {
+      return;
+    }
+    printTree(out, root->left);
+    out << root->data << " ";
+    printTree(out, root->right);
+  }
 }
 
 int main()
@@ -139,8 +151,16 @@ int main()
     }
   }
   int num = 0;
-  while (!(std::cin >> num).eof() && !std::cin.fail())
+  while (!(std::cin >> num).eof())
   {
+    if (!std::cin)
+    {
+      printTree(std::cout, root);
+      std::cout << "\n";
+      std::cerr << "Not number\n";
+      clear(root);
+      return 1;
+    }
     BiTree< int, std::less< int > >* extracted = nullptr;
     root = extract(root, num, std::addressof(extracted));
     if (extracted)
@@ -151,12 +171,6 @@ int main()
     {
       std::cout << "<INVALID NODE>\n";
     }
-  }
-  if (!std::cin)
-  {
-    std::cerr << "Not number\n";
-    clear(root);
-    return 1;
   }
   clear(root);
   return 0;
