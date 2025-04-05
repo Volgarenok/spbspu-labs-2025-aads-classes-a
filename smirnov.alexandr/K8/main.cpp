@@ -191,8 +191,16 @@ int main()
     return 1;
   }
   int a = 0;
-  while (!(std::cin >> a).eof() && !std::cin.fail())
+  while (!(std::cin >> a).eof())
   {
+    if (!std::cin)
+    {
+      std::cerr << "Input error\n";
+      print(std::cout, root);
+      std::cout << "\n";
+      clear(root);
+      return 1;
+    }
     BiTree< int, std::less< int > > * extracted = nullptr;
     root = extract(root, a, std::addressof(extracted));
     if (extracted)
@@ -203,14 +211,6 @@ int main()
     {
       std::cout << "<INVALID NODE>\n";
     }
-  }
-  if (!std::cin)
-  {
-    std::cerr << "Input error\n";
-    print(std::cout, root);
-    std::cout << "\n";
-    clear(root);
-    return 1;
   }
   print(std::cout, root);
   std::cout << "\n";
