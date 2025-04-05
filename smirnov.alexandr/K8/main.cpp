@@ -175,7 +175,7 @@ int main()
   BiTree< int, std::less< int > > * root = nullptr;
   try
   {
-    root = getTree< int, std::less< int > >(arr, size, std::less< int >());
+    root = getTree(arr, size, std::less< int >());
   }
   catch (const std::bad_alloc & e)
   {
@@ -183,13 +183,13 @@ int main()
     std::cerr << "Out of memory\n";
     return 1;
   }
+  delete[] arr;
   if (!std::cin)
   {
     clear(root);
     std::cerr << "Input error!\n";
     return 1;
   }
-  delete[] arr;
   int a = 0;
   while (!(std::cin >> a).eof() && !std::cin.fail())
   {
@@ -203,14 +203,14 @@ int main()
     {
       std::cout << "<INVALID NODE>\n";
     }
-    if (!std::cin)
-    {
-      std::cerr << "Input error\n";
-      print(std::cout, root);
-      std::cout << "\n";
-      clear(root);
-      return 1;
-    }
+  }
+  if (!std::cin)
+  {
+    std::cerr << "Input error\n";
+    print(std::cout, root);
+    std::cout << "\n";
+    clear(root);
+    return 1;
   }
   print(std::cout, root);
   std::cout << "\n";
