@@ -17,48 +17,36 @@ BiTree< T, Cmp > * getTree(const T * arr, size_t size, Cmp cmp)
   {
     for (size_t i = 0; i < size; ++i)
     {
-      BiTree< T, Cmp > * new_node = new BiTree< T, Cmp >{arr[i], cmp, nullptr, nullptr, nullptr};
-      if (root == nullptr)
+      BiTree<T, Cmp> * current = root;
+      BiTree<T, Cmp> * parent = nullptr;
+      while (current != nullptr)
       {
-        root = new_node;
+        parent = current;
+        if (cmp(arr[i], current->data))
+        {
+          current = current->left;
+        }
+        else
+        {
+          current = current->right;
+        }
+      }
+      BiTree<T, Cmp>* newNode = new BiTree<T, Cmp>{arr[i], cmp, nullptr, nullptr, parent};
+      if (parent == nullptr)
+      {
+        root = newNode;
+      }
+      else if (cmp(arr[i], parent->data))
+      {
+        parent->left = newNode;
       }
       else
       {
-        BiTree< T, Cmp > * current = root;
-        bool flag = true;
-        while (flag)
-        {
-          if (cmp(arr[i], current->data))
-          {
-            if (current->left == nullptr)
-            {
-              current->left = new_node;
-              new_node->parent = current;
-              flag = false;
-            }
-            else
-            {
-              current = current->left;
-            }
-          }
-          else
-          {
-            if (current->right == nullptr)
-            {
-              current->right = new_node;
-              new_node->parent = current;
-              flag = false;
-            }
-            else
-            {
-              current = current->right;
-            }
-          }
-        }
+        parent->right = newNode;
       }
     }
   }
-  catch (const std::bad_alloc & e)
+  catch (const std::bad_alloc& e)
   {
     clear(root);
     throw;
@@ -139,23 +127,21 @@ void clear(BiTree< T, Cmp > * root)
 }
 
 template< class T, class Cmp >
-void print(BiTree< T, Cmp > * root)
+void print(std::ostream & out, BiTree< T, Cmp > * root)
 {
-  bool first = true;
-  if (root != nullptr)
+  static bool first = true;
+  if (!root)
   {
-    if (first)
-    {
-      print(root->left);
-    }
-    else
-    {
-      std::cout << " ";
-    }
-    std::cout << root->data;
-    print(root->right);
-    first = false;
+    return;
   }
+  print(out, root->left);
+  if (!first)
+  {
+    out << " ";
+  }
+  out << root->data;
+  first = false;
+  print(out, root->right);
 }
 
 int main()
@@ -220,11 +206,13 @@ int main()
     if (!std::cin)
     {
       std::cerr << "Input error\n";
-      print(root);
+      print(std::cout, root);
+      std::cout << "\n";
       clear(root);
       return 1;
     }
   }
-  print(root);
+  print(std::cout, root);
+  std::cout << "\n";
   clear(root);
 }
