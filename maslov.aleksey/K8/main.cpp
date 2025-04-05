@@ -182,8 +182,16 @@ int main()
   }
   delete[] elements;
   int value = 0;
-  while (!(std::cin >> value).eof() && !std::cin.fail())
+  while (!(std::cin >> value).eof())
   {
+    if (!std::cin)
+    {
+      printTree(std::cout, root);
+      std::cout << "\n";
+      clear(root);
+      std::cerr << "ERROR: input\n";
+      return 1;
+    }
     BiTree< int, std::less< int > > * extracted = nullptr;
     root = extract(root, value, std::addressof(extracted));
     if (extracted)
