@@ -7,7 +7,7 @@ struct BiTree
   BiTree< T >* left;
   BiTree< T >* right;
   BiTree< T >* parent;
-  BiTree< T >(int x) :
+  BiTree< T >(T x):
     data(x),
     left(nullptr),
     right(nullptr),
@@ -83,11 +83,7 @@ BiTree< int >* convert(int* nums, size_t size)
 template< class T >
 BiTree< T >* rotate_right(BiTree< T >* root)
 {
-  if (!root)
-  {
-    throw std::logic_error("<INVALID ROTATE>\n");
-  }
-  if (!root->left)
+  if (!root || !root->left)
   {
     throw std::logic_error("<INVALID ROTATE>\n");
   }
@@ -119,11 +115,7 @@ template< class T >
 BiTree< T >* rotate_left(BiTree< T >* rotateRoot)
 {
   BiTree< T >* root = rotateRoot;
-  if (!root)
-  {
-    throw std::logic_error("<INVALID ROTATE>\n");
-  }
-  if (!root->right)
+  if (!root || !root->right)
   {
     throw std::logic_error("<INVALID ROTATE>\n");
   }
@@ -222,17 +214,17 @@ int main()
   while (!std::cin.eof() && std::cin >> cmd)
   {
     std::cin >> data;
-    if (std::cin.fail() || (cmd != "left" && cmd != "right"))
+    if (std::cin.fail())
     {
       std::cout << "<INVALID COMMAND>\n";
       delete[] nums;
       deleteTree(head);
       return 1;
     }
-    BiTree< int >* cur = head;
-    BiTree< int >* temp = find(cur, data, std::less< int >());
     if (cmd == "left")
     {
+      BiTree< int >* cur = head;
+      BiTree< int >* temp = find(cur, data, std::less< int >());
       try
       {
         res = rotate_left(temp);
@@ -247,8 +239,10 @@ int main()
         std::cout << e.what();
       }
     }
-    else
+    else if (cmd == "right")
     {
+      BiTree< int >* cur = head;
+      BiTree< int >* temp = find(cur, data, std::less< int >());
       try
       {
         res = rotate_right(temp);
@@ -262,6 +256,13 @@ int main()
       {
         std::cout << e.what();
       }
+    }
+    else
+    {
+      std::cout << "<INVALID COMMAND>\n";
+      delete[] nums;
+      deleteTree(head);
+      return 1;
     }
   }
   delete[] nums;
