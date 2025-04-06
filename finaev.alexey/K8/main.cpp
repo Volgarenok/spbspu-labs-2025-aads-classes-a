@@ -71,6 +71,67 @@ BiTree< int, std::less< int > >* convert(const T* nums, size_t size)
   return head;
 }
 
+template< class T, class Cmp >
+BiTree< T, Cmp >* find(BiTree< T, Cmp >* root, const T& value)
+{
+  if (!root)
+  {
+    return nullptr;
+  }
+  if (root->data == value)
+  {
+    return root;
+  }
+  else
+  {
+    if (root.cmp(value, root->data))
+    {
+      root = find(root->right, value);
+      return root;
+    }
+    else
+    {
+      root = find(root->left, value);
+      return root;
+    }
+  }
+}
+
+template < class T, class Cmp >
+BiTree < T, Cmp >* minRightTree(BiTree< T, Cmp >* root)
+{
+  BiTree< T, Cmp >* current = root;
+  current = current->right;
+  while(current->left)
+  {
+    current = current->left;
+  }
+  return current;
+}
+
+template < class T, class Cmp >
+BiTree < T, Cmp >* maxLeftTree(BiTree< T, Cmp >* root)
+{
+  BiTree< T, Cmp >* current = root;
+  current = current->left;
+  while(current->right)
+  {
+    current = current->right;
+  }
+  return current;
+}
+
+template< class T, class Cmp >
+BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
+{
+  *result = find(root, value);
+  if (*result == nullptr)
+  {
+    throw std::logic_error("<INVALID NODE>\n");
+  }
+  //else if ()
+}
+
 int main()
 {
   size_t size = 0;
@@ -104,6 +165,8 @@ int main()
     std::cerr << "bad_alloc!\n";
     return 1;
   }
-  std::cout << head->data << "\n";
+  BiTree< int, std::less< int > >* leftMax = maxLeftTree(head);
+  BiTree< int, std::less< int > >* rightMin = minRightTree(head);
+  std::cout << leftMax->data << "\n" << rightMin->data << "\n";
   deleteTree(head);
 }
