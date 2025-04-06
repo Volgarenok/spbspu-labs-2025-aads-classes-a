@@ -57,7 +57,7 @@ BiTree< int, std::less< int > >* convert(const T* nums, size_t size)
   for (size_t i = 1; i < size; ++i)
   {
     BiTree< T, Cmp >* elem = nullptr;
-    try 
+    try
     {
       elem = new BiTree< T, Cmp >{nums[i], std::less< int >{}, nullptr, nullptr, nullptr};
       insert(head, elem);
