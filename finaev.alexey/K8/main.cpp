@@ -267,8 +267,9 @@ int main()
     return 1;
   }
   int a = 0;
-  while (std::cin >> a)
+  while (true)
   {
+    std::cin >> a;
     BiTree< int, std::less< int > > * result = nullptr;
     if (std::cin.fail())
     {
