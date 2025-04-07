@@ -84,7 +84,7 @@ BiTree< T, Cmp >* find(BiTree< T, Cmp >* root, const T& value)
   }
   else
   {
-    if (root.cmp(value, root->data))
+    if (root->cmp(root->data, value))
     {
       root = find(root->right, value);
       return root;
@@ -121,15 +121,107 @@ BiTree < T, Cmp >* maxLeftTree(BiTree< T, Cmp >* root)
   return current;
 }
 
+template < class T, class Cmp >
+void swap(BiTree< T, Cmp >* first, BiTree< T, Cmp >* second)
+{
+  std::swap(first->data, second->data);
+  std::swap(first->cmp, second->cmp);
+}
+
+template < class T, class Cmp >
+void localExtraction(BiTree< T, Cmp >* root)
+{
+  if (!root)
+  {
+    return;
+  }
+  else
+  {
+    if (root->parent)
+    {
+      if (root->parent->right == root)
+      {
+        root->parent->right = nullptr;
+      }
+      else
+      {
+        root->parent->left = nullptr;
+      }
+    }
+  }
+}
+
 template< class T, class Cmp >
 BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, Cmp > ** result)
 {
   *result = find(root, value);
-  if (*result == nullptr)
+  if ((*result) == nullptr)
   {
     throw std::logic_error("<INVALID NODE>\n");
   }
-  //else if ()
+  BiTree< T, Cmp >* temp = (*result);
+  if (temp->right)
+  {
+    while (temp->right)
+    {
+      temp = minRightTree(temp);
+      swap(*result, temp);
+      *result = temp;
+    }
+    while (temp->parent)
+    {
+      temp = temp->parent;
+    }
+    localExtraction(*result);
+    return temp;
+  }
+  else if (temp->left)
+  {
+    while (temp->left)
+    {
+      temp = maxLeftTree(temp);
+      swap(*result, temp);
+      *result = temp;
+    }
+    while (temp->parent)
+    {
+      temp = temp->parent;
+    }
+    localExtraction(*result);
+    return temp;
+  }
+  else
+  {
+    if (!(*result)->parent)
+    {
+      return nullptr;
+    }
+    else
+    {
+      localExtraction(*result);
+      return root;
+    }
+  }
+}
+
+template < class T, class Cmp >
+void printTree(BiTree< T, Cmp >* root, std::ostream& out)
+{
+  if (root)
+  {
+    static int number = 0;
+    printTree(root->left, out);
+    if (number == 0)
+    {
+      out << root->data;
+      ++number;
+    }
+    else
+    {
+      out << " " << root->data;
+    }
+    printTree(root->right, out);
+  }
 }
 
 int main()
@@ -165,8 +257,33 @@ int main()
     std::cerr << "bad_alloc!\n";
     return 1;
   }
-  BiTree< int, std::less< int > >* leftMax = maxLeftTree(head);
-  BiTree< int, std::less< int > >* rightMin = minRightTree(head);
-  std::cout << leftMax->data << "\n" << rightMin->data << "\n";
+  int a = 0;
+  while (std::cin >> a)
+  {
+    BiTree< int, std::less< int > > * result = nullptr;
+    if (std::cin.fail())
+    {
+      std::cerr << "fail input\n";
+      printTree(head, std::cout);
+      std::cout << "\n";
+      deleteTree(head);
+      return 1;
+    }
+    if (std::cin.eof())
+    {
+      break;
+    }
+    try
+    {
+      head = extract(head, a, &result);
+      delete result;
+    }
+    catch(const std::logic_error& e)
+    {
+      std::cout << e.what() << "\n";
+    }
+  }
+  printTree(head, std::cout);
+  std::cout << "\n";
   deleteTree(head);
 }
