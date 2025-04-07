@@ -161,7 +161,7 @@ BiTree< T, Cmp > * extract(BiTree< T, Cmp > * root, const T & value, BiTree< T, 
   *result = find(root, value);
   if ((*result) == nullptr)
   {
-    throw std::logic_error("<INVALID NODE>\n");
+    throw std::logic_error("<INVALID NODE>");
   }
   BiTree< T, Cmp >* temp = (*result);
   if (temp->right)
