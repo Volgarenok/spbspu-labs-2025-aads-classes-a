@@ -228,6 +228,11 @@ int main()
 {
   size_t size = 0;
   std::cin >> size;
+  if (std::cin.fail())
+  {
+    std::cerr << "uncorrent input\n";
+    return 1; 
+  }
   if (size == 0)
   {
     return 0;
