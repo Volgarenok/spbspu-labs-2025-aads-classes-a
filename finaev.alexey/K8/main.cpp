@@ -231,7 +231,7 @@ int main()
   if (std::cin.fail())
   {
     std::cerr << "uncorrent input\n";
-    return 1; 
+    return 1;
   }
   if (size == 0)
   {
