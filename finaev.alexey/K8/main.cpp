@@ -269,8 +269,12 @@ int main()
   int a = 0;
   while (true)
   {
-    std::cin >> a;
     BiTree< int, std::less< int > > * result = nullptr;
+    std::cin >> a;
+    if (std::cin.eof())
+    {
+      break;
+    }
     if (std::cin.fail())
     {
       std::cerr << "fail input\n";
@@ -278,10 +282,6 @@ int main()
       std::cout << "\n";
       deleteTree(head);
       return 1;
-    }
-    if (std::cin.eof())
-    {
-      break;
     }
     try
     {
