@@ -53,6 +53,10 @@ void insert(BiTree< T, Cmp >* head, BiTree< T, Cmp >* elem)
 template < class T, class Cmp >
 BiTree< int, std::less< int > >* convert(const T* nums, size_t size)
 {
+  if (!nums)
+  {
+    return nullptr;
+  }
   BiTree< T, Cmp >* head = new BiTree< T, Cmp >{nums[0], std::less< int >{}, nullptr, nullptr, nullptr};
   for (size_t i = 1; i < size; ++i)
   {
@@ -233,11 +237,11 @@ int main()
     std::cerr << "uncorrent input\n";
     return 1;
   }
-  if (size == 0)
+  int* nums = nullptr;
+  if (size != 0)
   {
-    return 0;
+    nums = new int[size];
   }
-  int* nums = new int[size];
   for (size_t i = 0; i < size; ++i)
   {
     int a = 0;
