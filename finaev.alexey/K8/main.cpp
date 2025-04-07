@@ -51,7 +51,7 @@ void insert(BiTree< T, Cmp >* head, BiTree< T, Cmp >* elem)
 }
 
 template < class T, class Cmp >
-BiTree< int, std::less< int > >* convert(const T* nums, size_t size)
+BiTree< T, Cmp >* convert(const T* nums, size_t size)
 {
   if (!nums)
   {
